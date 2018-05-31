@@ -51,12 +51,13 @@ def run_algorithm_helper(args):
         context.ohlcv_df = pd.DataFrame({'date':[], 'open':[], 'high':[], 'low':[], 'close':[], 'volume':[]})
 
     def analyse(context=None, results=None):
-        csv_file_name = os.path.join(os.getcwd(), sym + '.csv')
+        csv_file_name = os.path.join(os.getcwd(), 'data', sym + '.csv')
         context.ohlcv.to_csv(csv_file_name)
     
     print('Processing sym={} from {} to {} on {}'.format(sym, start_date, end_date, exchange))
 
-    results = run_algorithm(initialize=initialize,
+    try:
+        results = run_algorithm(initialize=initialize,
                             handle_data=handle_data,
                             analyze=analyze,
                             start=start_date,
@@ -65,7 +66,9 @@ def run_algorithm_helper(args):
                             data_frequency='minute',
                             base_currency='usdt',
                             capital_base=10000)
-    return(results)
+        return(results)
+    except Exception as e:
+        return(e)
 
 def main():
     path = r'/Users/yowtzu/.catalyst/data/exchanges/'
