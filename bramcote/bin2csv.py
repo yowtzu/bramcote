@@ -61,15 +61,15 @@ def run_algorithm_helper(args):
         path = os.path.join(os.getcwd(), 'data', exchange)
         print(path)
         os.makedirs(path, exist_ok=True)
-        csv_file_name = os.path.join(path, start_date.strftime('%Y%M%d') + '.csv')
+        csv_file_name = os.path.join(path, start_date.strftime('%Y%m%d') + '.csv')
         df = pd.concat(context.ohlcv_df)
         df = df[['sym', 'dt', 'open', 'high', 'low', 'close', 'volume']].sort_values(['sym', 'dt'])
         df.to_csv(csv_file_name, index=False)
     
     print('Processing sym={} from {} to {} on {}'.format(syms, start_date, end_date, exchange))
 
-    #try:
-    results = run_algorithm(initialize=initialize,
+    try:
+        results = run_algorithm(initialize=initialize,
                             handle_data=handle_data,
                             analyze=analyze,
                             start=start_date,
@@ -78,10 +78,10 @@ def run_algorithm_helper(args):
                             data_frequency='minute',
                             base_currency='usdt',
                             capital_base=10000)
-    return(results)
-    #except Exception as e:
-    #    print('Error: {}'.format(e))
-    #    return(e)
+        return(results)
+    except Exception as e:
+        print('Error: {}'.format(e))
+        return(e)
 
 def main():
     path = r'/Users/yowtzu/.catalyst/data/exchanges/'
