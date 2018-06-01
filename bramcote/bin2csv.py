@@ -13,7 +13,7 @@ def handle_data(context, data):
     # Variables to record for a given asset: price and volume
     # Other options include 'open', 'high', 'open', 'close'
     # Please note that 'price' equals 'close'
-    date   = context.blotter.current_dt     # current time in each iteration
+    date   = pd.to_datetime(context.blotter.current_dt)     # current time in each iteration
     opened = data.current(context.asset, 'open')
     close = data.current(context.asset, 'close')
     high = data.current(context.asset, 'high')
@@ -31,6 +31,7 @@ def parse_json(path, exchange):
     df = pd.DataFrame(data).T
     df = df[['symbol', 'start_date', 'end_minute']].set_index('symbol').reset_index()
     df.start_date = pd.to_datetime(df.start_date).apply(lambda x: pytz.utc.localize(x.to_pydatetime()))
+    df.start_date = datetime(2018,5,20,0,0,0,0, pytz.utc)
     df.end_minute = pd.to_datetime(df.end_minute).apply(lambda x: pytz.utc.localize(x.to_pydatetime()))
     df['exchange'] = exchange
     return(df)
@@ -44,7 +45,8 @@ def run_algorithm_helper(args):
     def analyze(context=None, results=None):
         csv_file_name = os.path.join(os.getcwd(), 'data', sym + '.csv')
         df = pd.concat(context.ohlcv_df)
-        df.to_csv(csv_file_name)
+        df = df[['dt', 'open', 'high', 'low', 'close', 'volume']]
+        df.to_csv(csv_file_name, index=False)
     
     print('Processing sym={} from {} to {} on {}'.format(sym, start_date, end_date, exchange))
 
